@@ -1,46 +1,27 @@
 import dash
 import dash_core_components as dcc
+import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
+
+from nav import navbar
+from inputs import inputs
 import stats
 
-app = dash.Dash(__name__)
-
-options = []
-for state in stats.get_states():
-    state_dict = {'label': state, 'value': state}
-    options.append(state_dict)
-
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = html.Div(children=[
-    html.H1(children='COVID Tracking'),
 
-    html.Div(children='''
-        Dash: A web application framework for Python.
-    '''),
-
-    dcc.Graph(
-        id='example-graph',
-        figure={
-            'data': [
-                {'x': stats.get_states(), 'y': stats.get_positive(), 'type': 'bar', 'name': 'States'},
-            ],
-            'layout': {
-                'title': 'COVID Positive Numbers'
-            }
-        }
+    html.Div(navbar),
+    dbc.Container(children=[
+        html.H1(children='COVID Tracking'),
+        html.Div(inputs)
+    ]
     ),
 
-    dcc.Dropdown(id='states-input',
-                 options=options,
-                 value='NY'),
 
-    dcc.Dropdown(id='input-measure',
-                 options=[
-                        {'label': 'Positive Cases', 'value': 'positive'},
-                        {'label': 'Total Deaths', 'value': 'death'}],
-                    value='positive'),
+    # inputs,
 
     dcc.Graph(id='states-output'),
 
@@ -52,29 +33,38 @@ app.layout = html.Div(children=[
     # Output(component_id='input-output', component_property='children'),
     Output('states-output', 'figure'),
     # [Input(component_id='my-id', component_property='value')],
-    [Input('states-input', 'value'), Input('input-measure', 'value')],
+    [Input('states-input', 'value')],
 
 )
-def update_state(value, measure):
+def update_state(value):
     df = stats.get_states_hist(value)
+    new_positive = stats.get_new_metrics(df, 'positive')
+    new_deaths = stats.get_new_metrics(df, 'death')
+
 
     return {
         'data': [
-            {'x': df['date'].tolist(), 'y': get_y_measure(df, measure), 'type': 'line', 'name': 'Date'}
+            {'x': df['date'].tolist(), 'y': new_positive, 'type': 'bar', 'name': 'New Cases'},
+            {'x': df['date'].tolist(), 'y': new_deaths, 'type': 'bar', 'name': 'New Deaths'}
         ],
         'layout': go.Layout(
             xaxis={'type': 'category', 'title': 'State'},
-            yaxis={'type': 'log', 'title': 'Positive Cases'},
-            title='{} COVID {}'.format(value, measure.capitalize())
+            yaxis={'title': 'People'},
+            title='{} COVID New Cases and Deaths'.format(value)
         )
     }
+
 
 def get_y_measure(df, measure):
     return df[measure].tolist()
 
+
 def update_output_div(input_value):
     return 'You\'ve entered "{}"'.format(input_value)
 
+
+def remove_outliers(list):
+    return list[list.between(list.quantile(.15), list.quantile(.85))]
 
 if __name__ == '__main__':
     app.run_server(debug=True)

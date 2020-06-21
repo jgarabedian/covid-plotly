@@ -32,3 +32,7 @@ def get_states_hist(state):
     df = get_data(endpoint)
     return df
 
+
+def get_new_metrics(df, measure):
+    new_df = df[measure].diff(periods=1)
+    return new_df.tolist()
