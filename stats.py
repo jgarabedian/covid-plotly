@@ -72,6 +72,3 @@ def get_population_data() -> pd.DataFrame:
     dirname = os.path.dirname(__file__)
     file = os.path.join(dirname, "assets/data/populationdata.csv")
     return pd.read_csv(file)
-
-
-print(get_data.__doc__)

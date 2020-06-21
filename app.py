@@ -60,6 +60,7 @@ def update_state(value: str):
     new_deaths = stats.get_new_metrics(df, 'death')
     pos_avg = stats.moving_average(new_positive)
     death_avg = stats.moving_average(new_deaths)
+    # title = '{} COVID New Cases and Deaths'.format(value)
 
     return {
         'data': [
@@ -75,7 +76,7 @@ def update_state(value: str):
         'layout': go.Layout(
             xaxis={'type': 'date'},
             yaxis={'title': 'People', 'range': [0, np.nanmax(new_positive)]},
-            title='{} COVID New Cases and Deaths'.format(value),
+            title='New COVID Cases and Deaths',
             legend=dict(
                 x=.01,
                 y=.75,
@@ -108,4 +109,4 @@ def format_dates(list_col) -> list:
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
