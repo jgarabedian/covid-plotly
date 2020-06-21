@@ -4,15 +4,16 @@ import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
+import flask
 import os
 
 from nav import navbar
 from inputs import inputs
 import stats
+server = flask.Flask(__name__)
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, server=server, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-server = app.server()
 
 app.layout = html.Div(children=[
 
@@ -23,11 +24,9 @@ app.layout = html.Div(children=[
     ]
     ),
 
-
     # inputs,
 
     dcc.Graph(id='states-output'),
-
 
 ])
 
@@ -43,7 +42,6 @@ def update_state(value):
     df = stats.get_states_hist(value)
     new_positive = stats.get_new_metrics(df, 'positive')
     new_deaths = stats.get_new_metrics(df, 'death')
-
 
     return {
         'data': [
@@ -68,6 +66,7 @@ def update_output_div(input_value):
 
 def remove_outliers(list):
     return list[list.between(list.quantile(.15), list.quantile(.85))]
+
 
 if __name__ == '__main__':
     app.run_server(debug=False)
