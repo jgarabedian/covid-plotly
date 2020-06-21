@@ -5,6 +5,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import flask
+import numpy as np
 import os
 
 from nav import navbar
@@ -26,7 +27,7 @@ app.layout = html.Div(children=[
 
     # inputs,
 
-    dcc.Graph(id='states-output', config={'scrollZoom': True}),
+    dcc.Graph(id='states-output', config={'scrollZoom': True}, animate=True),
 
 ])
 
@@ -58,7 +59,7 @@ def update_state(value):
         ],
         'layout': go.Layout(
             xaxis={'type': 'category', 'title': 'State'},
-            yaxis={'title': 'People'},
+            yaxis={'title': 'People', 'range': [0, np.nanmax(new_positive)]},
             title='{} COVID New Cases and Deaths'.format(value),
             legend=dict(
                 x=.01,
@@ -80,13 +81,5 @@ def get_y_measure(df, measure):
     return df[measure].tolist()
 
 
-def update_output_div(input_value):
-    return 'You\'ve entered "{}"'.format(input_value)
-
-
-def remove_outliers(list):
-    return list[list.between(list.quantile(.15), list.quantile(.85))]
-
-
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
