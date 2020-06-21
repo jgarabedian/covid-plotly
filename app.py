@@ -7,9 +7,7 @@ import stats
 
 app = dash.Dash(__name__)
 
-# df = stats.get_data('https://covidtracking.com/api/v1/states/current.json')
 options = []
-new_df = stats.get_states_hist('NY')
 for state in stats.get_states():
     state_dict = {'label': state, 'value': state}
     options.append(state_dict)
@@ -33,62 +31,46 @@ app.layout = html.Div(children=[
             }
         }
     ),
-    #
-    # dcc.Input(id='my-id', value='initial value', type='text'),
-    #
-    # html.Div(id='input-output'),
 
     dcc.Dropdown(id='states-input',
                  options=options,
                  value='NY'),
 
-    # html.Div(id='states-output'),
+    dcc.Dropdown(id='input-measure',
+                 options=[
+                        {'label': 'Positive Cases', 'value': 'positive'},
+                        {'label': 'Total Deaths', 'value': 'death'}],
+                    value='positive'),
+
+    dcc.Graph(id='states-output'),
 
 
-    dcc.Graph(
-        id='states-output',
-        figure={
-            'data': [
-                {'x': new_df['date'].tolist(), 'y': new_df['positive'].tolist(), 'type': 'line', 'name': 'Date'}
-            ],
-            'layout': go.Layout(
-                xaxis={'type': 'category', 'title': 'State'},
-                yaxis={'type': 'log', 'title': 'Positive Cases'}
-                )
-            }
-    ),
-
-    # html.H1(children='COVID History'),
-    #
-    # html.Div(children='''
-    #     Historical Numbers in the US
-    # '''),
-    #
-    # dcc.Graph(
-    #     id='us-historical',
-    #     figure={
-    #         'data': [
-    #             {'x': stats.get_us_hist_dates(), 'y': stats.get_us_hist_positive(), 'type': 'line', 'name': 'Date'}
-    #         ],
-    #         'layout': {
-    #             'title': 'US Historical Trend'
-    #         }
-    #     }
-    # )
 ])
 
 
 @app.callback(
     # Output(component_id='input-output', component_property='children'),
-    Output(component_id='states-output', component_property='children'),
+    Output('states-output', 'figure'),
     # [Input(component_id='my-id', component_property='value')],
-    [Input('states-input', 'value')]
+    [Input('states-input', 'value'), Input('input-measure', 'value')],
 
 )
-def update_state(value):
+def update_state(value, measure):
     df = stats.get_states_hist(value)
-    return df
-    # return 'You have selected "{}"'.format(value)
+
+    return {
+        'data': [
+            {'x': df['date'].tolist(), 'y': get_y_measure(df, measure), 'type': 'line', 'name': 'Date'}
+        ],
+        'layout': go.Layout(
+            xaxis={'type': 'category', 'title': 'State'},
+            yaxis={'type': 'log', 'title': 'Positive Cases'},
+            title='{} COVID {}'.format(value, measure.capitalize())
+        )
+    }
+
+def get_y_measure(df, measure):
+    return df[measure].tolist()
 
 def update_output_div(input_value):
     return 'You\'ve entered "{}"'.format(input_value)
