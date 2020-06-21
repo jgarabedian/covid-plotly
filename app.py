@@ -13,10 +13,9 @@ import stats
 server = flask.Flask(__name__)
 
 app = dash.Dash(__name__, server=server, external_stylesheets=[dbc.themes.BOOTSTRAP])
-
+app.title = 'Covid and Flask'
 
 app.layout = html.Div(children=[
-
     html.Div(navbar),
     dbc.Container(children=[
         html.H1(children='COVID Tracking'),
