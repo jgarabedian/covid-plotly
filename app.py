@@ -19,6 +19,12 @@ app.title = 'Covid and Flask'
 app.layout = html.Div(children=[
     html.Div(navbar),
     dbc.Container(children=[
+        html.P(className="text-muted", children=[
+            'Thanks to ',
+            html.A(className="text-reset", href="https://covidtracking.com/",
+                   target="_blank", children='COVID Tracking'),
+            ' for the data.'
+        ]),
         html.Div('Double Click on the Graph to reset', className="text-muted"),
         html.Div(inputs),
         html.Div(children=[
@@ -96,4 +102,4 @@ def format_dates(list):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
