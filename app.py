@@ -4,12 +4,15 @@ import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
+import os
 
 from nav import navbar
 from inputs import inputs
 import stats
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+server = app.server()
 
 app.layout = html.Div(children=[
 
@@ -67,4 +70,4 @@ def remove_outliers(list):
     return list[list.between(list.quantile(.15), list.quantile(.85))]
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
