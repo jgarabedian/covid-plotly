@@ -19,13 +19,14 @@ app.layout = html.Div(children=[
     html.Div(navbar),
     dbc.Container(children=[
         html.H1(children='COVID Tracking'),
+        html.Div('Double Click on the Graph to reset', className="text-muted"),
         html.Div(inputs)
     ]
     ),
 
     # inputs,
 
-    dcc.Graph(id='states-output'),
+    dcc.Graph(id='states-output', config={'scrollZoom': True}),
 
 ])
 
@@ -41,16 +42,36 @@ def update_state(value):
     df = stats.get_states_hist(value)
     new_positive = stats.get_new_metrics(df, 'positive')
     new_deaths = stats.get_new_metrics(df, 'death')
+    pos_avg = stats.moving_average(new_positive)
+    death_avg = stats.moving_average(new_deaths)
 
     return {
         'data': [
-            {'x': df['date'].tolist(), 'y': new_positive, 'type': 'bar', 'name': 'New Cases'},
-            {'x': df['date'].tolist(), 'y': new_deaths, 'type': 'bar', 'name': 'New Deaths'}
+            {'x': df['date'].tolist(), 'y': new_positive, 'type': 'bar', 'name': 'New Cases',
+             'marker': {'color': 'rgb(2, 117, 216)'}},
+            {'x': df['date'].tolist(), 'y': new_deaths, 'type': 'bar', 'name': 'New Deaths',
+             'marker': {'color': 'rgb(2, 117, 216)'}},
+            {'x': df['date'].tolist(), 'y': pos_avg, 'type': 'line', 'name': '7 day Pos avg',
+             'marker': {'color': 'rgb(240, 173, 78)'}},
+            {'x': df['date'].tolist(), 'y': death_avg, 'type': 'line', 'name': '7 day Death avg',
+             'marker': {'color': 'rgb(240, 173, 78)'}}
         ],
         'layout': go.Layout(
             xaxis={'type': 'category', 'title': 'State'},
             yaxis={'title': 'People'},
-            title='{} COVID New Cases and Deaths'.format(value)
+            title='{} COVID New Cases and Deaths'.format(value),
+            legend=dict(
+                x=.01,
+                y=.75,
+                traceorder="normal",
+                font=dict(
+                    family="sans-serif",
+                    size=12,
+                    color="black"
+                ),
+                bordercolor="Black",
+                borderwidth=1
+            )
         )
     }
 

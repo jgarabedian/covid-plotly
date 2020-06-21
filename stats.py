@@ -36,3 +36,11 @@ def get_states_hist(state):
 def get_new_metrics(df, measure):
     new_df = df[measure].diff(periods=1)
     return new_df.tolist()
+
+
+def moving_average(col_list):
+    import pandas as pd
+    week = 7
+    col_series = pd.Series(col_list)
+    windows = col_series.rolling(week)
+    return windows.mean().tolist()
