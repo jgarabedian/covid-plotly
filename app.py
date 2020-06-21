@@ -19,15 +19,19 @@ app.title = 'Covid and Flask'
 app.layout = html.Div(children=[
     html.Div(navbar),
     dbc.Container(children=[
-        html.H1(children='COVID Tracking'),
         html.Div('Double Click on the Graph to reset', className="text-muted"),
-        html.Div(inputs)
+        html.Div(inputs),
+        html.Div(children=[
+            dcc.Graph(id='states-output', config={'scrollZoom': True}, animate=True)
+        ]
+
+        )
     ]
     ),
 
     # inputs,
 
-    dcc.Graph(id='states-output', config={'scrollZoom': True}, animate=True),
+
 
 ])
 
@@ -48,17 +52,17 @@ def update_state(value):
 
     return {
         'data': [
-            {'x': df['date'].tolist(), 'y': new_positive, 'type': 'bar', 'name': 'New Cases',
+            {'x': format_dates(df['date'].tolist()), 'y': new_positive, 'type': 'bar', 'name': 'New Cases',
              'marker': {'color': 'rgb(2, 117, 216)'}},
-            {'x': df['date'].tolist(), 'y': new_deaths, 'type': 'bar', 'name': 'New Deaths',
+            {'x': format_dates(df['date'].tolist()), 'y': new_deaths, 'type': 'bar', 'name': 'New Deaths',
              'marker': {'color': 'rgb(2, 117, 216)'}},
-            {'x': df['date'].tolist(), 'y': pos_avg, 'type': 'line', 'name': '7 day Pos avg',
+            {'x': format_dates(df['date'].tolist()), 'y': pos_avg, 'type': 'line', 'name': '7 day Pos avg',
              'marker': {'color': 'rgb(240, 173, 78)'}},
-            {'x': df['date'].tolist(), 'y': death_avg, 'type': 'line', 'name': '7 day Death avg',
+            {'x': format_dates(df['date'].tolist()), 'y': death_avg, 'type': 'line', 'name': '7 day Death avg',
              'marker': {'color': 'rgb(240, 173, 78)'}}
         ],
         'layout': go.Layout(
-            xaxis={'type': 'category', 'title': 'State'},
+            xaxis={'type': 'date'},
             yaxis={'title': 'People', 'range': [0, np.nanmax(new_positive)]},
             title='{} COVID New Cases and Deaths'.format(value),
             legend=dict(
@@ -79,6 +83,16 @@ def update_state(value):
 
 def get_y_measure(df, measure):
     return df[measure].tolist()
+
+
+def format_dates(list):
+    from datetime import datetime
+    new_list = []
+    for i in list:
+        date_object = datetime.strptime(str(i),'%Y%m%d')
+        # new_list.append(date_object.strftime('%a, %b %d'))
+        new_list.append(date_object.strftime('%Y-%m-%d'))
+    return new_list
 
 
 if __name__ == '__main__':
