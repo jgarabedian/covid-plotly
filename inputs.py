@@ -2,7 +2,7 @@ import dash_bootstrap_components as dbc
 import dash_html_components as html
 import stats
 
-options = []
+options: list = []
 for state in stats.get_states():
     state_dict = {'label': state, 'value': state}
     options.append(state_dict)

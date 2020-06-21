@@ -6,7 +6,6 @@ from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import flask
 import numpy as np
-import os
 
 from nav import navbar
 from inputs import inputs
@@ -49,7 +48,13 @@ app.layout = html.Div(children=[
     [Input('states-input', 'value')],
 
 )
-def update_state(value):
+def update_state(value: str):
+    """
+    :name update_state
+    :desc run when new state is selected from dropdown
+    :param value: str - state abbr
+    :return: figure
+    """
     df = stats.get_states_hist(value)
     new_positive = stats.get_new_metrics(df, 'positive')
     new_deaths = stats.get_new_metrics(df, 'death')
@@ -87,19 +92,20 @@ def update_state(value):
     }
 
 
-def get_y_measure(df, measure):
+def get_y_measure(df: list, measure: str) -> list:
+    # Convert the df column to a list
     return df[measure].tolist()
 
 
-def format_dates(list):
+def format_dates(list_col) -> list:
+    # Convert yyyymmdd to date for axis
     from datetime import datetime
     new_list = []
-    for i in list:
+    for i in list_col:
         date_object = datetime.strptime(str(i),'%Y%m%d')
-        # new_list.append(date_object.strftime('%a, %b %d'))
         new_list.append(date_object.strftime('%Y-%m-%d'))
     return new_list
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
