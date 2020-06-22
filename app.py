@@ -7,6 +7,7 @@ import numpy as np
 
 from components.states_dash import states_dash
 import stats
+from components.us_dash import get_current_total
 from nav import navbar
 import plotly.graph_objs as go
 
@@ -24,6 +25,48 @@ app.layout = html.Div(children=[
                    target="_blank", children='COVID Tracking'),
             ' for the data.'
         ]),
+        html.H1(className="display-4", children=[
+            'US Total'
+        ]),
+        dbc.Row(
+          [
+              dbc.Col(html.Div(className="border text-center", children=[
+                  html.H1(id="total-positive", children=[
+                      # 'Metric'
+                      get_current_total('positive')
+                  ]),
+                  html.H3(
+                      children=[
+                          html.Small(className="text-muted", children='Total Positive Cases')
+                      ]
+                  ),
+              ])),
+              dbc.Col(html.Div(className="border text-center", children=[
+                  html.H1(id="total-death", children=[
+                      # 'Metric'
+                      get_current_total('death')
+                  ]),
+                  html.H3(
+                      children=[
+                        html.Small(className="text-muted", children='Total Deaths')
+                      ]
+                  ),
+
+              ])),
+              dbc.Col(html.Div(className="border text-center", children=[
+                  html.H1(id="hosp-currently", children=[
+                      # 'Metric'
+                      get_current_total('hospitalizedCurrently')
+                  ]),
+                  html.H3(
+                      children=[
+                          html.Small(className="text-muted", children='Currently Hospitalized')
+                      ]
+                  ),
+              ])),
+          ]
+        ),
+        html.Hr(),
         html.Div(states_dash)
     )
     ),
@@ -78,5 +121,7 @@ def update_state(value: str):
             )
         )
     }
+
+
 if __name__ == '__main__':
     app.run_server(debug=False)
