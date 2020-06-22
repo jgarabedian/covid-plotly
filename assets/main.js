@@ -20,9 +20,14 @@ function numberWithCommas(str) {
 }
 
 window.onload = function() {
-    var totalPositiveEle = document.getElementById('total-positive')
-    var targetPos = parseInt(totalPositiveEle.innerText);
-    animateIncrement('total-positive', 0, targetPos, 500, 1000);
+// add event listeners here
+
+    document.getElementById('total-positive').addEvenetListener("load", function() {
+        var totalPositiveEle = document.getElementById('total-positive')
+        var targetPos = parseInt(totalPositiveEle.innerText);
+        animateIncrement('total-positive', 0, targetPos, 500, 1000);
+    })
+
 
     var totalDeathEle = document.getElementById('total-death');
     var targetDeath = parseInt(totalDeathEle.innerText);
@@ -32,3 +37,5 @@ window.onload = function() {
     var targetHosp = parseInt(hospCurrentlyEle.innerText);
     animateIncrement('hosp-currently', 0, targetHosp, 500, 50)
 }
+
+

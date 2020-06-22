@@ -28,7 +28,7 @@ app.layout = html.Div(children=[
         html.H1(className="display-4", children=[
             'US Total'
         ]),
-        dbc.Row(
+        dbc.Row(id="us-container", children=
           [
               dbc.Col(html.Div(className="border text-center", children=[
                   html.H1(id="total-positive", children=[
