@@ -15,6 +15,16 @@ def get_data(endpoint: str) -> pd.DataFrame:
     return df.sort_values(by=['date', 'state'])
 
 
+def format_dates(list_col) -> list:
+    # Convert yyyymmdd to date for axis
+    from datetime import datetime
+    new_list = []
+    for i in list_col:
+        date_object = datetime.strptime(str(i), '%Y%m%d')
+        new_list.append(date_object.strftime('%Y-%m-%d'))
+    return new_list
+
+
 def get_states() -> list:
     """Get the list of US States"""
     df = get_data('https://covidtracking.com/api/v1/states/current.json')
