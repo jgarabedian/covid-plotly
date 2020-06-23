@@ -1,77 +1,51 @@
 import dash
+import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import flask
-import numpy as np
 
 from components.states_dash import states_dash
+from components.us_dash import us_dash_html
 import stats
-from components.us_dash import get_current_total
 from nav import navbar
 import plotly.graph_objs as go
 
 server = flask.Flask(__name__)
 
-app = dash.Dash(__name__, server=server, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, server=server,
+                external_stylesheets=[dbc.themes.BOOTSTRAP],
+                suppress_callback_exceptions=True)
 app.title = 'Covid and Flask'
 
-app.layout = html.Div(children=[
+app.layout = html.Div(
+    # className="bg-light",
+    children=[
+    dcc.Location(id='url', refresh=False),
     html.Div(navbar),
-    dbc.Container(children=(
+    dbc.Container( children=(
         html.P(className="text-muted", children=[
             'Thanks to ',
             html.A(className="text-reset", href="https://covidtracking.com/",
                    target="_blank", children='COVID Tracking'),
             ' for the data.'
         ]),
-        html.H1(className="display-4", children=[
-            'US Total'
-        ]),
-        dbc.Row(id="us-container", children=
-          [
-              dbc.Col(html.Div(className="border text-center", children=[
-                  html.H1(id="total-positive", children=[
-                      # 'Metric'
-                      get_current_total('positive')
-                  ]),
-                  html.H3(
-                      children=[
-                          html.Small(className="text-muted", children='Total Positive Cases')
-                      ]
-                  ),
-              ])),
-              dbc.Col(html.Div(className="border text-center", children=[
-                  html.H1(id="total-death", children=[
-                      # 'Metric'
-                      get_current_total('death')
-                  ]),
-                  html.H3(
-                      children=[
-                        html.Small(className="text-muted", children='Total Deaths')
-                      ]
-                  ),
-
-              ])),
-              dbc.Col(html.Div(className="border text-center", children=[
-                  html.H1(id="hosp-currently", children=[
-                      # 'Metric'
-                      get_current_total('hospitalizedCurrently')
-                  ]),
-                  html.H3(
-                      children=[
-                          html.Small(className="text-muted", children='Currently Hospitalized')
-                      ]
-                  ),
-              ])),
-          ]
-        ),
-        html.Hr(),
-        html.Div(states_dash)
-    )
+        html.Div(id="dash-content")
+        )
     ),
-
 ])
+
+@app.callback(dash.dependencies.Output('dash-content', 'children'),
+              [dash.dependencies.Input('url', 'pathname')])
+
+def update_dash(pathname):
+    if pathname == '/':
+        return us_dash_html
+    if pathname == '/state':
+        return states_dash
+    else:
+        return us_dash_html
+
 
 @app.callback(
     Output('states-output', 'figure'),
@@ -124,4 +98,4 @@ def update_state(value: str):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
