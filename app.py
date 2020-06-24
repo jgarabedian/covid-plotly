@@ -5,9 +5,10 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import flask
 
-from components.states_dash import states_dash
+from components.states_dash import states_dash, get_current_state
 from components.us_dash import us_dash_html
 import stats
+import CONSTANTS
 from components.nav import navbar
 import plotly.graph_objs as go
 
@@ -18,6 +19,8 @@ app = dash.Dash(__name__, server=server,
                 suppress_callback_exceptions=True)
 app.title = 'Covid and Flask'
 
+state_acronyms = list(CONSTANTS.US_STATE_ABBR.values())
+key_list = list(CONSTANTS.US_STATE_ABBR.keys())
 app.layout = html.Div(
     # className="bg-light",
     children=[
@@ -48,7 +51,15 @@ def update_dash(pathname):
 
 
 @app.callback(
-    Output('states-output', 'figure'),
+    [
+        Output('dash-title', 'children'),
+        Output('states-output', 'figure'),
+        Output('total-positive', 'children'),
+        Output('total-death', 'children'),
+        Output('hosp-currently', 'children'),
+        Output('icu-currently', 'children'),
+        Output('vent-currently', 'children')
+    ],
     [Input('states-input', 'value')],
 
 )
@@ -66,7 +77,16 @@ def update_state(value: str):
     death_avg = stats.moving_average(new_deaths)
     title = '{} COVID New Cases and Deaths'.format(value)
 
-    return {
+    current_pos = get_current_state(value, 'positive')
+    current_death = get_current_state(value, 'death')
+    current_hosp = get_current_state(value, 'hospitalizedCurrently')
+    current_icu = get_current_state(value, 'inIcuCurrently')
+    current_vent = get_current_state(value, 'onVentilatorCurrently')
+    state_name = key_list[state_acronyms.index(value)]
+
+    dashTitle = state_name + " Dashboard"
+
+    fig = {
         'data': [
             {'x': stats.format_dates(df['date'].tolist()), 'y': new_positive, 'type': 'bar', 'name': 'New Cases',
              'marker': {'color': 'rgb(2, 117, 216)'}},
@@ -95,7 +115,12 @@ def update_state(value: str):
             )
         )
     }
+    tuple_return = (dashTitle, fig, current_pos,
+                    current_death, current_hosp,
+                    current_icu, current_vent)
+
+    return tuple_return
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)

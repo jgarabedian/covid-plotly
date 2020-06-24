@@ -20,7 +20,6 @@ posAvg = stats.moving_average(newPos)
 newDeath = stats.get_new_metrics(df, 'death')
 deathAvg = stats.moving_average(newDeath)
 dates = stats.format_dates(df['date'])
-print(newPos)
 
 fig = {
     'data': [

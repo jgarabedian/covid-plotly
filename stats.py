@@ -28,7 +28,8 @@ def format_dates(list_col) -> list:
 def get_states() -> list:
     """Get the list of US States"""
     df = get_data('https://covidtracking.com/api/v1/states/current.json')
-    return df['state'].tolist()
+    sorted_df = df.sort_values(by='state')
+    return sorted_df['state'].tolist()
 
 
 def get_positive() -> list:
