@@ -29,15 +29,15 @@ fig = {
          'marker': {'color': 'rgb(2, 117, 216)'}},
         {'x': dates,
          'y': posAvg, 'type': 'line',
-         'name': '7 day avg',
+         'name': '7 day Pos avg',
          'marker': {'color': 'rgb(240, 173, 78)'}},
         {'x': dates,
          'y': newDeath, 'type': 'bar',
-         'name': 'New Cases',
+         'name': 'New Deaths',
          'marker': {'color': 'rgb(217, 83, 79)'}},
         {'x': dates,
          'y': deathAvg, 'type': 'line',
-         'name': '7 day avg',
+         'name': '7 day Death avg',
          'marker': {'color': 'rgb(240, 173, 78)'}}
     ],
     'layout': go.Layout(
