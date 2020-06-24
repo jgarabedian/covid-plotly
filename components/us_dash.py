@@ -1,6 +1,8 @@
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-
+import dash_core_components as dcc
+import plotly.graph_objs as go
+import stats
 
 def get_current_total(metric) -> str:
     import requests
@@ -10,6 +12,56 @@ def get_current_total(metric) -> str:
     df = pd.DataFrame(response.json())
     pos = int(df[metric][0])
     return f"{pos:,}"
+
+
+df = stats.get_us_hist()
+newPos = stats.get_new_metrics(df, 'positive')
+posAvg = stats.moving_average(newPos)
+newDeath = stats.get_new_metrics(df, 'death')
+deathAvg = stats.moving_average(newDeath)
+dates = stats.format_dates(df['date'])
+print(newPos)
+
+fig = {
+    'data': [
+        {'x': dates,
+         'y': newPos, 'type': 'bar',
+         'name': 'New Cases',
+         'marker': {'color': 'rgb(2, 117, 216)'}},
+        {'x': dates,
+         'y': posAvg, 'type': 'line',
+         'name': '7 day avg',
+         'marker': {'color': 'rgb(240, 173, 78)'}},
+        {'x': dates,
+         'y': newDeath, 'type': 'bar',
+         'name': 'New Cases',
+         'marker': {'color': 'rgb(217, 83, 79)'}},
+        {'x': dates,
+         'y': deathAvg, 'type': 'line',
+         'name': '7 day avg',
+         'marker': {'color': 'rgb(240, 173, 78)'}}
+    ],
+    'layout': go.Layout(
+        xaxis = {'type': 'date'},
+        yaxis = {'title': 'People'},
+        title='US COVID Cases',
+        legend=dict(
+                x=.01,
+                y=.75,
+                traceorder="normal",
+                font=dict(
+                    family="sans-serif",
+                    size=12,
+                    color="black"
+                ),
+                bordercolor="Black",
+                borderwidth=1
+            )
+    )
+}
+
+
+
 
 
 us_dash_html = html.Div(children=[
@@ -99,5 +151,20 @@ us_dash_html = html.Div(children=[
             )
         ],
         justify="center"
+    ),
+    html.Div(
+        dbc.Row(
+            justify="center",
+            children=[
+                dbc.Col(
+                    children=[
+                        dcc.Graph(
+                            id="us-hist",
+                            figure=fig
+                        )
+                    ]
+                )
+            ]
+        )
     )
 ])

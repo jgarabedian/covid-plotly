@@ -8,7 +8,7 @@ import flask
 from components.states_dash import states_dash
 from components.us_dash import us_dash_html
 import stats
-from nav import navbar
+from components.nav import navbar
 import plotly.graph_objs as go
 
 server = flask.Flask(__name__)
@@ -71,7 +71,7 @@ def update_state(value: str):
             {'x': stats.format_dates(df['date'].tolist()), 'y': new_positive, 'type': 'bar', 'name': 'New Cases',
              'marker': {'color': 'rgb(2, 117, 216)'}},
             {'x': stats.format_dates(df['date'].tolist()), 'y': new_deaths, 'type': 'bar', 'name': 'New Deaths',
-             'marker': {'color': 'rgb(2, 117, 216)'}},
+             'marker': {'color': 'rgb(217, 83, 79)'}},
             {'x': stats.format_dates(df['date'].tolist()), 'y': pos_avg, 'type': 'line', 'name': '7 day Pos avg',
              'marker': {'color': 'rgb(240, 173, 78)'}},
             {'x': stats.format_dates(df['date'].tolist()), 'y': death_avg, 'type': 'line', 'name': '7 day Death avg',

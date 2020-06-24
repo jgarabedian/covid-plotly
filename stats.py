@@ -12,7 +12,7 @@ def get_data(endpoint: str) -> pd.DataFrame:
 
     response = requests.get(endpoint)
     df = pd.DataFrame(response.json())
-    return df.sort_values(by=['date', 'state'])
+    return df.sort_values(by=['date'])
 
 
 def format_dates(list_col) -> list:
@@ -36,6 +36,11 @@ def get_positive() -> list:
     df = get_data('https://covidtracking.com/api/v1/states/current.json')
     return df['positive'].tolist()
 
+
+def get_us_hist() -> pd.DataFrame:
+    """Hit the historical US endpoint"""
+    df = get_data('https://covidtracking.com/api/v1/us/daily.json')
+    return df
 
 def get_us_hist_dates():
     """Get dates for us hist x axis"""
