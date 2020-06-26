@@ -22,44 +22,54 @@ newDeath = stats.get_new_metrics(df, 'death')
 deathAvg = stats.moving_average(newDeath)
 dates = stats.format_dates(df['date'])
 
-fig = {
-    'data': [
-        {'x': dates,
-         'y': newPos, 'type': 'bar',
-         'name': 'New Cases',
-         'marker': {'color': 'rgb(2, 117, 216)'}},
-        {'x': dates,
-         'y': posAvg, 'type': 'line',
-         'name': '7 day Pos avg',
-         'marker': {'color': 'rgb(240, 173, 78)'}},
-        {'x': dates,
-         'y': newDeath, 'type': 'bar',
-         'name': 'New Deaths',
-         'marker': {'color': 'rgb(217, 83, 79)'}},
-        {'x': dates,
-         'y': deathAvg, 'type': 'line',
-         'name': '7 day Death avg',
-         'marker': {'color': 'rgb(240, 173, 78)'}}
-    ],
-    'layout': go.Layout(
-        xaxis = {'type': 'date'},
-        yaxis = {'title': 'People'},
-        title='US COVID Cases',
-        legend=dict(
-                x=.01,
-                y=.75,
-                traceorder="normal",
-                font=dict(
-                    family="sans-serif",
-                    size=12,
-                    color="black"
-                ),
-                bordercolor="Black",
-                borderwidth=1
-            ),
-        hovermode='x unified'
+fig1 = go.Figure()
+
+fig1.add_trace(go.Bar(
+    x=stats.format_dates(df['date'].tolist()),
+    y=newPos,
+    name='New Cases',
+    marker=dict(
+        color='rgb(2, 117, 216)'
     )
-}
+))
+
+fig1.add_trace(go.Bar(
+    x=stats.format_dates(df['date'].tolist()),
+    y=newDeath,
+    name='New Deaths',
+    marker=dict(
+        color='rgb(217, 83, 79)'
+    )
+))
+
+fig1.add_trace(go.Scatter(
+    x=stats.format_dates(df['date'].tolist()),
+    y=posAvg,
+    name='7 Day Pos Avg',
+    mode='lines+markers',
+    line=dict(color='rgb(240, 173, 78)')
+))
+
+fig1.add_trace(go.Scatter(
+    x=stats.format_dates(df['date'].tolist()),
+    y=deathAvg,
+    name='7 Day Death Avg',
+    mode='lines+markers',
+    line=dict(color='rgb(91, 192, 222)')
+))
+
+fig1.update_layout(
+    xaxis=dict(
+        type='date'
+    ),
+    yaxis=dict(
+        title='People',
+        gridcolor='lightgrey'
+    ),
+    title='New Cases and Deaths',
+    plot_bgcolor='white',
+    hovermode='x unified'
+)
 
 # testing rate
 df['testing_rate'] = df['positive'] / df['totalTestResults']
@@ -201,7 +211,7 @@ us_dash_html = html.Div(children=[
                     children=[
                         dcc.Graph(
                             id="us-hist",
-                            figure=fig,
+                            figure=fig1,
                             config={'scrollZoom': True}
                         )
                     ]
