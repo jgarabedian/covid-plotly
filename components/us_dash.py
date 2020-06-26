@@ -56,12 +56,14 @@ fig = {
                 ),
                 bordercolor="Black",
                 borderwidth=1
-            )
+            ),
+        hovermode='x unified'
     )
 }
 
 # testing rate
 df['testing_rate'] = df['positive'] / df['totalTestResults']
+rate_avg = stats.moving_average(df['testing_rate'])
 fig2 = go.Figure()
 
 fig2 = make_subplots(specs=[[{"secondary_y": True}]])
@@ -77,8 +79,8 @@ fig2.add_trace(go.Bar(
 
 fig2.add_trace(go.Scatter(
     x=stats.format_dates(df['date'].tolist()),
-    y=df['testing_rate'],
-    name='Positive Rate',
+    y=rate_avg,
+    name='Positive Rate (7 Day Avg)',
     mode='lines+markers',
     line=dict(color='rgb(217, 83, 79)')
 ),
@@ -100,7 +102,7 @@ fig2.update_layout(
     xaxis=dict(
         showgrid=True
     ),
-    hovermode='x'
+    hovermode='x unified'
 )
 
 us_dash_html = html.Div(children=[

@@ -145,6 +145,7 @@ def update_state(value: str):
 
     # testing rate
     df['testing_rate'] = df['positive'] / df['totalTestResults']
+    rate_avg = stats.moving_average(df['testing_rate'])
 
     fig2 = make_subplots(specs=[[{"secondary_y": True}]])
 
@@ -162,8 +163,8 @@ def update_state(value: str):
 
     fig2.add_trace(go.Scatter(
         x=stats.format_dates(df['date'].tolist()),
-        y=df['testing_rate'],
-        name='Positive Rate',
+        y=rate_avg,
+        name='Positive Rate (7 Day Avg)',
         mode='lines+markers',
         line=dict(color='rgb(217, 83, 79)')
         ),
@@ -187,6 +188,8 @@ def update_state(value: str):
         ),
         hovermode='x'
     )
+
+    fig2.update_yaxes(showspikes=True)
 
 
 
