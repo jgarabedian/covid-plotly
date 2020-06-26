@@ -6,6 +6,7 @@ navbar = dbc.NavbarSimple(
         dbc.NavItem(dbc.NavLink("State Dashboard", href="/state")),
         # dbc.NavItem(dbc.NavLink("State Comparison", href="/compare"))
     ],
+    fluid=True,
     brand="COVID and Flask",
     brand_href="/",
     color="primary",
