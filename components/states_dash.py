@@ -3,8 +3,6 @@ import dash_bootstrap_components as dbc
 import dash_html_components as html
 from inputs import inputs
 
-state = 'AK'
-metric = 'positive'
 
 def get_current_state(state: str, metric: str) -> str:
     import requests
@@ -28,10 +26,10 @@ states_dash = html.Div(
                              children=[
                                  html.H1(id="total-positive"),
                                  html.H3(
-                                    children=[
-                                        html.Small(className="text-muted", children='Total Positive Cases')
-                                    ]
-                                ),
+                                     children=[
+                                         html.Small(className="text-muted", children='Total Positive Cases')
+                                     ]
+                                 ),
                              ]),
                     md=12,
                     lg=6,
@@ -102,13 +100,27 @@ states_dash = html.Div(
         html.Div(
             children=[
                 dcc.Graph(id="states-output",
-                      config={'scrollZoom': True})
+                          config={'scrollZoom': True})
+            ]
+        ),
+        dbc.Row(
+            html.Div(
+                'The rate of positive tests is a good indicator of '
+                'the effect testing is having on overall numbers.',
+                className="text-muted")
+        ),
+        dbc.Row(
+            justify="center",
+            children=[
+                dbc.Col(
+                    children=[
+                        dcc.Graph(
+                            id="total-tests",
+                            config={'scrollZoom': True}
+                        )
+                    ]
+                )
             ]
         )
     ]
 )
-
-
-
-
-

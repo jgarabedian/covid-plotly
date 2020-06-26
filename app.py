@@ -11,6 +11,7 @@ import stats
 import CONSTANTS
 from components.nav import navbar
 import plotly.graph_objs as go
+from plotly.subplots import make_subplots
 
 server = flask.Flask(__name__)
 
@@ -26,7 +27,9 @@ app.layout = html.Div(
     children=[
     dcc.Location(id='url', refresh=False),
     html.Div(navbar),
-    dbc.Container( children=(
+    dbc.Container(
+        fluid=True,
+        children=(
         html.P(className="text-muted", children=[
             'Thanks to ',
             html.A(className="text-reset", href="https://covidtracking.com/",
@@ -58,7 +61,8 @@ def update_dash(pathname):
         Output('total-death', 'children'),
         Output('hosp-currently', 'children'),
         Output('icu-currently', 'children'),
-        Output('vent-currently', 'children')
+        Output('vent-currently', 'children'),
+        Output('total-tests', 'figure')
     ],
     [Input('states-input', 'value')],
 
@@ -82,45 +86,117 @@ def update_state(value: str):
     current_hosp = get_current_state(value, 'hospitalizedCurrently')
     current_icu = get_current_state(value, 'inIcuCurrently')
     current_vent = get_current_state(value, 'onVentilatorCurrently')
+
     state_name = key_list[state_acronyms.index(value)]
 
     dashTitle = state_name + " Dashboard"
 
-    fig = {
-        'data': [
-            {'x': stats.format_dates(df['date'].tolist()), 'y': new_positive, 'type': 'bar', 'name': 'New Cases',
-             'marker': {'color': 'rgb(2, 117, 216)'}},
-            {'x': stats.format_dates(df['date'].tolist()), 'y': new_deaths, 'type': 'bar', 'name': 'New Deaths',
-             'marker': {'color': 'rgb(217, 83, 79)'}},
-            {'x': stats.format_dates(df['date'].tolist()), 'y': pos_avg, 'type': 'line', 'name': '7 day Pos avg',
-             'marker': {'color': 'rgb(240, 173, 78)'}},
-            {'x': stats.format_dates(df['date'].tolist()), 'y': death_avg, 'type': 'line', 'name': '7 day Death avg',
-             'marker': {'color': 'rgb(240, 173, 78)'}}
-        ],
-        'layout': go.Layout(
-            xaxis={'type': 'date'},
-            yaxis={'title': 'People'},
-            title=title,
-            legend=dict(
-                x=.01,
-                y=.75,
-                traceorder="normal",
-                font=dict(
-                    family="sans-serif",
-                    size=12,
-                    color="black"
-                ),
-                bordercolor="Black",
-                borderwidth=1
-            )
+    fig3 = go.Figure()
+
+    # New positives
+    fig3.add_trace(go.Bar(
+        x=stats.format_dates(df['date'].tolist()),
+        y=new_positive,
+        name='New Cases',
+        marker=dict(
+            color='rgb(2, 117, 216)'
         )
-    }
-    tuple_return = (dashTitle, fig, current_pos,
+    ))
+
+    fig3.add_trace(go.Bar(
+        x=stats.format_dates(df['date'].tolist()),
+        y=new_deaths,
+        name='New Deaths',
+        marker=dict(
+            color='rgb(217, 83, 79)'
+        )
+    ))
+
+    fig3.add_trace(go.Scatter(
+        x=stats.format_dates(df['date'].tolist()),
+        y=pos_avg,
+        name='7 Day Pos Avg',
+        mode='lines+markers',
+        line=dict(color='rgb(240, 173, 78)')
+    ))
+
+    fig3.add_trace(go.Scatter(
+        x=stats.format_dates(df['date'].tolist()),
+        y=death_avg,
+        name='7 Day Death Avg',
+        mode='lines+markers',
+        line=dict(color='rgb(91, 192, 222)')
+    ))
+
+
+    fig3.update_layout(
+        xaxis=dict(
+            type='date'
+        ),
+        yaxis=dict(
+            title='People',
+            gridcolor='lightgrey'
+        ),
+        title=title,
+        plot_bgcolor='white',
+        hovermode='x'
+    )
+
+
+    # testing rate
+    df['testing_rate'] = df['positive'] / df['totalTestResults']
+
+    fig2 = make_subplots(specs=[[{"secondary_y": True}]])
+
+
+    fig2.add_trace(go.Bar(
+        x=stats.format_dates(df['date'].tolist()),
+        y=df['totalTestResults'],
+        name='Total Tests',
+        marker_color='rgb(2, 117, 216)'
+        ),
+        secondary_y=False
+    )
+
+
+
+    fig2.add_trace(go.Scatter(
+        x=stats.format_dates(df['date'].tolist()),
+        y=df['testing_rate'],
+        name='Positive Rate',
+        mode='lines+markers',
+        line=dict(color='rgb(217, 83, 79)')
+        ),
+        secondary_y=True
+    )
+
+    fig2.update_layout(
+        yaxis=dict(
+            title='Total Tests',
+            gridcolor='lightgrey'
+        ),
+        yaxis2=dict(
+            title='% Positive Rate',
+            side='right'
+        ),
+        yaxis2_tickformat='%',
+        plot_bgcolor='white',
+        title='Tests vs. Positive Rate',
+        xaxis=dict(
+            showgrid=True
+        ),
+        hovermode='x'
+    )
+
+
+
+    tuple_return = (dashTitle, fig3, current_pos,
                     current_death, current_hosp,
-                    current_icu, current_vent)
+                    current_icu, current_vent,
+                    fig2)
 
     return tuple_return
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)

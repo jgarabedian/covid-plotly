@@ -2,6 +2,7 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import plotly.graph_objs as go
+from plotly.subplots import make_subplots
 import stats
 
 def get_current_total(metric) -> str:
@@ -59,9 +60,48 @@ fig = {
     )
 }
 
+# testing rate
+df['testing_rate'] = df['positive'] / df['totalTestResults']
+fig2 = go.Figure()
 
+fig2 = make_subplots(specs=[[{"secondary_y": True}]])
 
+fig2.add_trace(go.Bar(
+    x=stats.format_dates(df['date'].tolist()),
+    y=df['totalTestResults'],
+    name='Total Tests',
+    marker_color='rgb(2, 117, 216)'
+),
+    secondary_y=False
+)
 
+fig2.add_trace(go.Scatter(
+    x=stats.format_dates(df['date'].tolist()),
+    y=df['testing_rate'],
+    name='Positive Rate',
+    mode='lines+markers',
+    line=dict(color='rgb(217, 83, 79)')
+),
+    secondary_y=True
+)
+
+fig2.update_layout(
+    yaxis=dict(
+        title='Total Tests',
+        gridcolor='lightgrey'
+    ),
+    yaxis2=dict(
+        title='% Positive Rate',
+        side='right'
+    ),
+    yaxis2_tickformat='%',
+    plot_bgcolor='white',
+    title='Tests vs. Positive Rate',
+    xaxis=dict(
+        showgrid=True
+    ),
+    hovermode='x'
+)
 
 us_dash_html = html.Div(children=[
     html.H1(className="display-4", children=[
@@ -70,7 +110,7 @@ us_dash_html = html.Div(children=[
     dbc.Row(children=
     [
         dbc.Col(
-            html.Div(className="border text-center kpi-row", children=[
+            html.Div(className="border rounded text-center kpi-row", children=[
                 html.H1(id="total-positive", children=[
                     # 'Metric'
                     get_current_total('positive')
@@ -85,7 +125,7 @@ us_dash_html = html.Div(children=[
             lg=6,
             xl=4,
             sm=12),
-        dbc.Col(html.Div(className="border text-center kpi-row", children=[
+        dbc.Col(html.Div(className="border rounded text-center kpi-row", children=[
             html.H1(id="total-death", children=[
                 # 'Metric'
                 get_current_total('death')
@@ -159,7 +199,24 @@ us_dash_html = html.Div(children=[
                     children=[
                         dcc.Graph(
                             id="us-hist",
-                            figure=fig
+                            figure=fig,
+                            config={'scrollZoom': True}
+                        )
+                    ]
+                )
+            ]
+        )
+    ),
+    html.Div(
+        dbc.Row(
+            justify="center",
+            children=[
+                dbc.Col(
+                    children=[
+                        dcc.Graph(
+                            id="us-testing",
+                            figure=fig2,
+                            config={'scrollZoom': True}
                         )
                     ]
                 )
