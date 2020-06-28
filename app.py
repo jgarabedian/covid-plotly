@@ -23,7 +23,7 @@ app = dash.Dash(__name__, server=server,
                 suppress_callback_exceptions=True)
 app.title = 'Covid and Flask'
 
-app.scripts.append_script({'external_url':'https://jack-covid-plotly.herokuapp.com//assets/main.js'})
+app.scripts.append_script({'external_url':'https://jack-covid-plotly.herokuapp.com/assets/main.js'})
 
 state_acronyms = list(CONSTANTS.US_STATE_ABBR.values())
 key_list = list(CONSTANTS.US_STATE_ABBR.keys())
