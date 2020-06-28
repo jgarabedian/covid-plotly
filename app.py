@@ -23,7 +23,35 @@ app = dash.Dash(__name__, server=server,
                 suppress_callback_exceptions=True)
 app.title = 'Covid and Flask'
 
-app.scripts.append_script({'external_url':'https://jack-covid-plotly.herokuapp.com/assets/gtag.js'})
+# app.scripts.append_script({'external_url':'https://jack-covid-plotly.herokuapp.com/assets/gtag.js'})
+
+app.index_string = """<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-150551765-3"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', 'UA-150551765-3');
+        </script>
+
+        {%metas%}
+        <title>{%title%}</title>
+        {%favicon%}
+        {%css%}
+    </head>
+    <body>
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>"""
 
 state_acronyms = list(CONSTANTS.US_STATE_ABBR.values())
 key_list = list(CONSTANTS.US_STATE_ABBR.keys())
