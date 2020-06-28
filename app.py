@@ -4,6 +4,9 @@ import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import flask
+import numpy as np
+
+np.seterr(divide='ignore', invalid='ignore')
 
 from components.states_dash import states_dash, get_current_state
 from components.us_dash import us_dash_html
@@ -74,7 +77,13 @@ def update_state(value: str):
     :param value: str - state abbr
     :return: figure
     """
-    df = stats.get_states_hist(value)
+    df2 = stats.get_states_hist(value)
+    df2['newPos'] = np.asarray(stats.get_new_metrics(df2, 'positive'))
+    df2['newTests'] = np.asarray(stats.get_new_metrics(df2, 'totalTestResults'))
+    # df = df2[(df2['newPos'] > 0) & (df2['newTests'] > 0)]
+
+    # print(df2)
+    df = df2
     new_positive = stats.get_new_metrics(df, 'positive')
     new_deaths = stats.get_new_metrics(df, 'death')
     pos_avg = stats.moving_average(new_positive)
@@ -139,32 +148,28 @@ def update_state(value: str):
         ),
         title=title,
         plot_bgcolor='white',
-        hovermode='x'
+        hovermode='x unified'
     )
 
-
     # testing rate
-    df['testing_rate'] = df['positive'] / df['totalTestResults']
+    df['testing_rate'] = df['newPos'] / df['newTests']
     rate_avg = stats.moving_average(df['testing_rate'])
 
     fig2 = make_subplots(specs=[[{"secondary_y": True}]])
 
-
     fig2.add_trace(go.Bar(
         x=stats.format_dates(df['date'].tolist()),
-        y=df['totalTestResults'],
-        name='Total Tests',
+        y=df['newTests'],
+        name='New Tests',
         marker_color='rgb(2, 117, 216)'
         ),
         secondary_y=False
     )
 
-
-
     fig2.add_trace(go.Scatter(
         x=stats.format_dates(df['date'].tolist()),
         y=rate_avg,
-        name='Positive Rate (7 Day Avg)',
+        name='7 Day Pos Rate Avg',
         mode='lines+markers',
         line=dict(color='rgb(217, 83, 79)')
         ),
@@ -173,7 +178,7 @@ def update_state(value: str):
 
     fig2.update_layout(
         yaxis=dict(
-            title='Total Tests',
+            title='New Tests',
             gridcolor='lightgrey'
         ),
         yaxis2=dict(
@@ -181,17 +186,20 @@ def update_state(value: str):
             side='right'
         ),
         yaxis2_tickformat='%',
+        yaxis2_range=[0,max(rate_avg)],
         plot_bgcolor='white',
         title='Tests vs. Positive Rate',
         xaxis=dict(
             showgrid=True
         ),
-        hovermode='x'
+        hovermode='x unified'
     )
-
-    fig2.update_yaxes(showspikes=True)
-
-
+    ymax = max(df['newTests'].dropna())
+    fig2.update_yaxes(
+        showspikes=True,
+        range=[0, ymax],
+        secondary_y=False
+    )
 
     tuple_return = (dashTitle, fig3, current_pos,
                     current_death, current_hosp,

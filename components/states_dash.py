@@ -104,10 +104,11 @@ states_dash = html.Div(
             ]
         ),
         dbc.Row(
-            html.Div(
+            dbc.Col(html.Div(
                 'The rate of positive tests is a good indicator of '
                 'the effect testing is having on overall numbers.',
                 className="text-muted")
+            )
         ),
         dbc.Row(
             justify="center",

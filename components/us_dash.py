@@ -3,7 +3,10 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
+import numpy as np
 import stats
+
+
 
 def get_current_total(metric) -> str:
     import requests
@@ -71,17 +74,21 @@ fig1.update_layout(
     hovermode='x unified'
 )
 
+# new tests
+new_tests = stats.get_new_metrics(df, 'totalTestResults')
+
 # testing rate
-df['testing_rate'] = df['positive'] / df['totalTestResults']
-rate_avg = stats.moving_average(df['testing_rate'])
+np.seterr(divide='ignore', invalid='ignore')
+testing_rate = np.array(newPos) / np.array(new_tests)
+rate_avg = stats.moving_average(testing_rate)
 fig2 = go.Figure()
 
 fig2 = make_subplots(specs=[[{"secondary_y": True}]])
 
 fig2.add_trace(go.Bar(
     x=stats.format_dates(df['date'].tolist()),
-    y=df['totalTestResults'],
-    name='Total Tests',
+    y=new_tests,
+    name='New Tests',
     marker_color='rgb(2, 117, 216)'
 ),
     secondary_y=False
@@ -90,7 +97,7 @@ fig2.add_trace(go.Bar(
 fig2.add_trace(go.Scatter(
     x=stats.format_dates(df['date'].tolist()),
     y=rate_avg,
-    name='Positive Rate (7 Day Avg)',
+    name='7 Day Pos Rate Avg',
     mode='lines+markers',
     line=dict(color='rgb(217, 83, 79)')
 ),
@@ -99,7 +106,7 @@ fig2.add_trace(go.Scatter(
 
 fig2.update_layout(
     yaxis=dict(
-        title='Total Tests',
+        title='New Tests',
         gridcolor='lightgrey'
     ),
     yaxis2=dict(
@@ -113,6 +120,14 @@ fig2.update_layout(
         showgrid=True
     ),
     hovermode='x unified'
+)
+
+ymax = max(new_tests)
+
+fig2.update_yaxes(
+    showspikes=True,
+    range=[0, ymax],
+    secondary_y=False
 )
 
 us_dash_html = html.Div(children=[
