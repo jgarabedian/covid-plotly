@@ -38,6 +38,20 @@ states_dash = html.Div(
                 dbc.Col(
                     html.Div(className="border text-center kpi-row",
                              children=[
+                                 html.H1(id="total-recovered"),
+                                 html.H3(
+                                     children=[
+                                         html.Small(className="text-muted", children='Total Recovered')
+                                     ]
+                                 ),
+                             ]),
+                    md=12,
+                    lg=6,
+                    xl=4,
+                    sm=12),
+                dbc.Col(
+                    html.Div(className="border text-center kpi-row",
+                             children=[
                                  html.H1(id="total-death"),
                                  html.H3(
                                      children=[

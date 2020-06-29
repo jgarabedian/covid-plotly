@@ -152,6 +152,22 @@ us_dash_html = html.Div(children=[
             lg=6,
             xl=4,
             sm=12),
+        dbc.Col(html.Div(className="border text-center kpi-row", children=[
+            html.H1(id="vent-currently", children=[
+                # 'Metric'
+                get_current_total('recovered')
+            ]),
+            html.H3(
+                children=[
+                    html.Small(className="text-muted", children='Total Recovered')
+                ]
+                ),
+            ]),
+            md=12,
+            lg=6,
+            xl=4,
+            sm=12
+            ),
         dbc.Col(html.Div(className="border rounded text-center kpi-row", children=[
             html.H1(id="total-death", children=[
                 # 'Metric'

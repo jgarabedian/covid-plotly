@@ -97,6 +97,7 @@ def update_dash(pathname):
         Output('states-output', 'figure'),
         Output('total-positive', 'children'),
         Output('total-death', 'children'),
+        Output('total-recovered', 'children'),
         Output('hosp-currently', 'children'),
         Output('icu-currently', 'children'),
         Output('vent-currently', 'children'),
@@ -127,6 +128,7 @@ def update_state(value: str):
 
     current_pos = get_current_state(value, 'positive')
     current_death = get_current_state(value, 'death')
+    current_recovered = get_current_state(value, 'recovered')
     current_hosp = get_current_state(value, 'hospitalizedCurrently')
     current_icu = get_current_state(value, 'inIcuCurrently')
     current_vent = get_current_state(value, 'onVentilatorCurrently')
@@ -237,9 +239,9 @@ def update_state(value: str):
     )
 
     tuple_return = (dashTitle, fig3, current_pos,
-                    current_death, current_hosp,
-                    current_icu, current_vent,
-                    fig2)
+                    current_death, current_recovered,
+                    current_hosp, current_icu,
+                    current_vent, fig2)
 
     return tuple_return
 
