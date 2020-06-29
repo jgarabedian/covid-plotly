@@ -18,12 +18,17 @@ from plotly.subplots import make_subplots
 
 server = flask.Flask(__name__)
 
+meta_tags = {
+    "name": "Covid and Flask",
+    "description": "A site utiling Flask and Plotly to analyze COVID-19 Information."
+}
+
 app = dash.Dash(__name__, server=server,
                 external_stylesheets=[dbc.themes.BOOTSTRAP],
+                meta_tags=[meta_tags],
                 suppress_callback_exceptions=True)
 app.title = 'Covid and Flask'
 
-# app.scripts.append_script({'external_url':'https://jack-covid-plotly.herokuapp.com/assets/gtag.js'})
 
 app.index_string = """<!DOCTYPE html>
 <html>
