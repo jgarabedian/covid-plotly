@@ -113,7 +113,7 @@ fig2.update_layout(
         title='% Positive Rate',
         side='right'
     ),
-    yaxis2_tickformat='%',
+    yaxis2_tickformat=',.1%',
     plot_bgcolor='white',
     title='Tests vs. Positive Rate',
     xaxis=dict(
