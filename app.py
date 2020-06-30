@@ -113,13 +113,15 @@ def update_state(value: str):
     :param value: str - state abbr
     :return: figure
     """
-    df2 = stats.get_states_hist(value)
-    df2['newPos'] = np.asarray(stats.get_new_metrics(df2, 'positive'))
-    df2['newTests'] = np.asarray(stats.get_new_metrics(df2, 'totalTestResults'))
+    import pandas as pd
+    df = stats.get_states_hist(value)
+    df['newPos'] = np.asarray(stats.get_new_metrics(df, 'positive'))
+    df['newTests'] = np.asarray(stats.get_new_metrics(df, 'totalTestResults'))
     # df = df2[(df2['newPos'] > 0) & (df2['newTests'] > 0)]
 
     # print(df2)
-    df = df2
+    # df = df2
+    new_pos = stats.get_new_metrics(df, 'positive')
     new_positive = stats.get_new_metrics(df, 'positive')
     new_deaths = stats.get_new_metrics(df, 'death')
     pos_avg = stats.moving_average(new_positive)
@@ -189,14 +191,16 @@ def update_state(value: str):
     )
 
     # testing rate
+    np.seterr(divide='ignore', invalid='ignore')
+    new_tests = stats.get_new_metrics(df, 'totalTestResults')
+    testing_rate = np.array(new_pos) / np.array(new_tests)
     df['testing_rate'] = df['newPos'] / df['newTests']
-    rate_avg = stats.moving_average(df['testing_rate'])
-
+    rate_avg = stats.moving_average(testing_rate)
     fig2 = make_subplots(specs=[[{"secondary_y": True}]])
 
     fig2.add_trace(go.Bar(
         x=stats.format_dates(df['date'].tolist()),
-        y=df['newTests'],
+        y=new_tests,
         name='New Tests',
         marker_color='rgb(2, 117, 216)'
         ),
@@ -205,7 +209,7 @@ def update_state(value: str):
 
     fig2.add_trace(go.Scatter(
         x=stats.format_dates(df['date'].tolist()),
-        y=rate_avg,
+        y=pd.Series(rate_avg).fillna(0).tolist(),
         name='7 Day Pos Rate Avg',
         mode='lines+markers',
         line=dict(color='rgb(217, 83, 79)')
@@ -222,7 +226,7 @@ def update_state(value: str):
             title='% Positive Rate',
             side='right'
         ),
-        yaxis2_tickformat='%',
+        yaxis2_tickformat=',.2%',
         yaxis2_range=[0,max(rate_avg)],
         plot_bgcolor='white',
         title='Tests vs. Positive Rate',
