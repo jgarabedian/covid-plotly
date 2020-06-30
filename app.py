@@ -67,6 +67,7 @@ app.layout = html.Div(
     html.Div(navbar),
     dbc.Container(
         fluid=True,
+        className="bg-light",
         children=(
         html.P(className="text-muted", children=[
             'Thanks to ',

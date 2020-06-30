@@ -22,7 +22,7 @@ states_dash = html.Div(
         dbc.Row(
             children=[
                 dbc.Col(
-                    html.Div(className="border text-center kpi-row",
+                    html.Div(className="border text-center kpi-row bg-white shadow",
                              children=[
                                  html.H1(id="total-positive"),
                                  html.H3(
@@ -36,7 +36,7 @@ states_dash = html.Div(
                     xl=4,
                     sm=12),
                 dbc.Col(
-                    html.Div(className="border text-center kpi-row",
+                    html.Div(className="border text-center kpi-row bg-white shadow",
                              children=[
                                  html.H1(id="total-recovered"),
                                  html.H3(
@@ -50,7 +50,7 @@ states_dash = html.Div(
                     xl=4,
                     sm=12),
                 dbc.Col(
-                    html.Div(className="border text-center kpi-row",
+                    html.Div(className="border text-center kpi-row bg-white shadow",
                              children=[
                                  html.H1(id="total-death"),
                                  html.H3(
@@ -64,7 +64,7 @@ states_dash = html.Div(
                     xl=4,
                     sm=12),
                 dbc.Col(
-                    html.Div(className="border text-center kpi-row",
+                    html.Div(className="border text-center kpi-row bg-white shadow",
                              children=[
                                  html.H1(id="hosp-currently"),
                                  html.H3(
@@ -78,7 +78,7 @@ states_dash = html.Div(
                     xl=4,
                     sm=12),
                 dbc.Col(
-                    html.Div(className="border text-center kpi-row",
+                    html.Div(className="border text-center kpi-row bg-white shadow",
                              children=[
                                  html.H1(id="icu-currently"),
                                  html.H3(
@@ -92,7 +92,7 @@ states_dash = html.Div(
                     xl=4,
                     sm=12),
                 dbc.Col(
-                    html.Div(className="border text-center kpi-row",
+                    html.Div(className="border text-center kpi-row bg-white shadow",
                              children=[
                                  html.H1(id="vent-currently"),
                                  html.H3(
@@ -111,11 +111,16 @@ states_dash = html.Div(
         html.Div('Double Click on the Graph to reset',
                  className="text-muted"),
         html.Div(inputs),
-        html.Div(
-            children=[
-                dcc.Graph(id="states-output",
-                          config={'scrollZoom': True})
-            ]
+        dbc.Row(
+            dbc.Col(
+                className="mb-2",
+                children=[
+                    dcc.Graph(id="states-output",
+                              className="shadow",
+                            config={'scrollZoom': True})
+                ]
+
+            )
         ),
         dbc.Row(
             dbc.Col(html.Div(
@@ -128,8 +133,10 @@ states_dash = html.Div(
             justify="center",
             children=[
                 dbc.Col(
+                    className="mb-2",
                     children=[
                         dcc.Graph(
+                            className="shadow",
                             id="total-tests",
                             config={'scrollZoom': True}
                         )

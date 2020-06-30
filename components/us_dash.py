@@ -137,7 +137,7 @@ us_dash_html = html.Div(children=[
     dbc.Row(children=
     [
         dbc.Col(
-            html.Div(className="border rounded text-center kpi-row", children=[
+            html.Div(className="border rounded text-center kpi-row bg-white shadow", children=[
                 html.H1(id="total-positive", children=[
                     # 'Metric'
                     get_current_total('positive')
@@ -152,7 +152,7 @@ us_dash_html = html.Div(children=[
             lg=6,
             xl=4,
             sm=12),
-        dbc.Col(html.Div(className="border text-center kpi-row", children=[
+        dbc.Col(html.Div(className="border text-center kpi-row bg-white shadow", children=[
             html.H1(id="vent-currently", children=[
                 # 'Metric'
                 get_current_total('recovered')
@@ -168,7 +168,7 @@ us_dash_html = html.Div(children=[
             xl=4,
             sm=12
             ),
-        dbc.Col(html.Div(className="border rounded text-center kpi-row", children=[
+        dbc.Col(html.Div(className="border rounded text-center kpi-row bg-white shadow", children=[
             html.H1(id="total-death", children=[
                 # 'Metric'
                 get_current_total('death')
@@ -183,7 +183,7 @@ us_dash_html = html.Div(children=[
             lg=6,
             xl=4,
             sm=12),
-        dbc.Col(html.Div(className="border text-center kpi-row", children=[
+        dbc.Col(html.Div(className="border text-center kpi-row bg-white shadow", children=[
             html.H1(id="hosp-currently", children=[
                 # 'Metric'
                 get_current_total('hospitalizedCurrently')
@@ -199,7 +199,7 @@ us_dash_html = html.Div(children=[
             xl=4,
             sm=12
             ),
-        dbc.Col(html.Div(className="border text-center kpi-row", children=[
+        dbc.Col(html.Div(className="border text-center kpi-row bg-white shadow", children=[
             html.H1(id="icu-currently", children=[
                 # 'Metric'
                 get_current_total('inIcuCurrently')
@@ -215,7 +215,7 @@ us_dash_html = html.Div(children=[
             xl=4,
             sm=12
             ),
-        dbc.Col(html.Div(className="border text-center kpi-row", children=[
+        dbc.Col(html.Div(className="border text-center kpi-row bg-white shadow", children=[
             html.H1(id="vent-currently", children=[
                 # 'Metric'
                 get_current_total('onVentilatorCurrently')
@@ -239,8 +239,10 @@ us_dash_html = html.Div(children=[
             justify="center",
             children=[
                 dbc.Col(
+                    className="mb-2",
                     children=[
                         dcc.Graph(
+                            className="shadow",
                             id="us-hist",
                             figure=fig1,
                             config={'scrollZoom': True}
@@ -255,8 +257,10 @@ us_dash_html = html.Div(children=[
             justify="center",
             children=[
                 dbc.Col(
+                    className="mb-2",
                     children=[
                         dcc.Graph(
+                            className="shadow",
                             id="us-testing",
                             figure=fig2,
                             config={'scrollZoom': True}
