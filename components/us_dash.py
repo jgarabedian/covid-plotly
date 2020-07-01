@@ -152,7 +152,7 @@ us_dash_html = html.Div(children=[
             lg=6,
             xl=4,
             sm=12),
-        dbc.Col(html.Div(className="border text-center kpi-row bg-white shadow", children=[
+        dbc.Col(html.Div(className="border rounded text-center kpi-row bg-white shadow", children=[
             html.H1(id="vent-currently", children=[
                 # 'Metric'
                 get_current_total('recovered')
@@ -183,7 +183,7 @@ us_dash_html = html.Div(children=[
             lg=6,
             xl=4,
             sm=12),
-        dbc.Col(html.Div(className="border text-center kpi-row bg-white shadow", children=[
+        dbc.Col(html.Div(className="border rounded text-center kpi-row bg-white shadow", children=[
             html.H1(id="hosp-currently", children=[
                 # 'Metric'
                 get_current_total('hospitalizedCurrently')
@@ -199,7 +199,7 @@ us_dash_html = html.Div(children=[
             xl=4,
             sm=12
             ),
-        dbc.Col(html.Div(className="border text-center kpi-row bg-white shadow", children=[
+        dbc.Col(html.Div(className="border rounded text-center kpi-row bg-white shadow", children=[
             html.H1(id="icu-currently", children=[
                 # 'Metric'
                 get_current_total('inIcuCurrently')
@@ -215,7 +215,7 @@ us_dash_html = html.Div(children=[
             xl=4,
             sm=12
             ),
-        dbc.Col(html.Div(className="border text-center kpi-row bg-white shadow", children=[
+        dbc.Col(html.Div(className="border rounded text-center kpi-row bg-white shadow", children=[
             html.H1(id="vent-currently", children=[
                 # 'Metric'
                 get_current_total('onVentilatorCurrently')
