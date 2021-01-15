@@ -7,14 +7,23 @@ import numpy as np
 import stats
 
 
-
 def get_current_total(metric) -> str:
     import requests
     import pandas as pd
     endpoint = 'https://covidtracking.com/api/v1/us/current.json'
+    # if stats.check_internet():
     response = requests.get(endpoint)
     df = pd.DataFrame(response.json())
-    pos = int(df[metric][0])
+    # else:
+    #     df = pd.read_csv(r'/Users/jackgarabedian/Documents/Workspace/covid-plotly/tests/us.csv')
+    #     print('reading from csv!')
+    # df.to_csv(r'/Users/jackgarabedian/Documents/Workspace/covid-plotly/tests/us.csv', header=True)
+    try:
+        pos = int(df[metric][0])
+    except:
+        pos = 0
+        print('something happened with ', metric)
+    # pos = 0
     return f"{pos:,}"
 
 
@@ -152,22 +161,22 @@ us_dash_html = html.Div(children=[
             lg=6,
             xl=4,
             sm=12),
-        dbc.Col(html.Div(className="border rounded text-center kpi-row bg-white shadow", children=[
-            html.H1(id="vent-currently", children=[
-                # 'Metric'
-                get_current_total('recovered')
-            ]),
-            html.H3(
-                children=[
-                    html.Small(className="text-muted", children='Total Recovered')
-                ]
-                ),
-            ]),
-            md=12,
-            lg=6,
-            xl=4,
-            sm=12
-            ),
+        # dbc.Col(html.Div(className="border rounded text-center kpi-row bg-white shadow", children=[
+        #     html.H1(id="vent-currently", children=[
+        #         # 'Metric'
+        #         # get_current_total('recovered')
+        #     ]),
+        #     html.H3(
+        #         children=[
+        #             html.Small(className="text-muted", children='Total Recovered')
+        #         ]
+        #         ),
+        #     ]),
+        #     md=12,
+        #     lg=6,
+        #     xl=4,
+        #     sm=12
+        #     ),
         dbc.Col(html.Div(className="border rounded text-center kpi-row bg-white shadow", children=[
             html.H1(id="total-death", children=[
                 # 'Metric'

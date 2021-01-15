@@ -20,7 +20,7 @@ server = flask.Flask(__name__)
 
 meta_tags = {
     "name": "Covid and Flask",
-    "description": "A site utiling Flask and Plotly to analyze COVID-19 Information."
+    "description": "A site utilizing Flask and Plotly to analyze COVID-19 Information."
 }
 
 app = dash.Dash(__name__, server=server,
@@ -28,7 +28,6 @@ app = dash.Dash(__name__, server=server,
                 meta_tags=[meta_tags],
                 suppress_callback_exceptions=True)
 app.title = 'Covid and Flask'
-
 
 app.index_string = """<!DOCTYPE html>
 <html>
@@ -61,28 +60,27 @@ app.index_string = """<!DOCTYPE html>
 state_acronyms = list(CONSTANTS.US_STATE_ABBR.values())
 key_list = list(CONSTANTS.US_STATE_ABBR.keys())
 app.layout = html.Div(
-    # className="bg-light",
     children=[
-    dcc.Location(id='url', refresh=False),
-    html.Div(navbar),
-    dbc.Container(
-        fluid=True,
-        className="bg-light",
-        children=(
-        html.P(className="text-muted", children=[
-            'Thanks to ',
-            html.A(className="text-reset", href="https://covidtracking.com/",
-                   target="_blank", children='COVID Tracking'),
-            ' for the data.'
-        ]),
-        html.Div(id="dash-content")
-        )
-    ),
-])
+        dcc.Location(id='url', refresh=False),
+        html.Div(navbar),
+        dbc.Container(
+            fluid=True,
+            className="bg-light",
+            children=(
+                html.P(className="text-muted", children=[
+                    'Thanks to ',
+                    html.A(className="text-reset", href="https://covidtracking.com/",
+                           target="_blank", children='COVID Tracking'),
+                    ' for the data.'
+                ]),
+                html.Div(id="dash-content")
+            )
+        ),
+    ])
+
 
 @app.callback(dash.dependencies.Output('dash-content', 'children'),
               [dash.dependencies.Input('url', 'pathname')])
-
 def update_dash(pathname):
     if pathname == '/':
         return us_dash_html
@@ -177,7 +175,6 @@ def update_state(value: str):
         line=dict(color='rgb(91, 192, 222)')
     ))
 
-
     fig3.update_layout(
         xaxis=dict(
             type='date'
@@ -204,7 +201,7 @@ def update_state(value: str):
         y=new_tests,
         name='New Tests',
         marker_color='rgb(2, 117, 216)'
-        ),
+    ),
         secondary_y=False
     )
 
@@ -214,7 +211,7 @@ def update_state(value: str):
         name='7 Day Pos Rate Avg',
         mode='lines+markers',
         line=dict(color='rgb(217, 83, 79)')
-        ),
+    ),
         secondary_y=True
     )
 
@@ -228,7 +225,7 @@ def update_state(value: str):
             side='right'
         ),
         yaxis2_tickformat=',.2%',
-        yaxis2_range=[0,max(rate_avg)],
+        yaxis2_range=[0, max(rate_avg)],
         plot_bgcolor='white',
         title='Tests vs. Positive Rate',
         xaxis=dict(
